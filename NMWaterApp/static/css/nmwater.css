@@ -1,0 +1,14 @@
+/* CSS specific to NM Water App */
+#map {
+    height: 650px;
+    width: 600px;
+}
+
+.datacharts {
+    height: 220px;
+    width: 400px;
+}
+
+#app-ui {
+    display: flex;
+}

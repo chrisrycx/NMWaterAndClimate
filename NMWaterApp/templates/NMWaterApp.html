@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static',path='/img/logo_sm.png') }}" />
+    <title>CRC App</title>
+    <link rel="stylesheet" href="{{ url_for('static',path='/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',path='/css/nmwater.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+        integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+        crossorigin=""></script>
+    <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+</head>
+<body>
+	<header>
+		<div id="logo">
+            <a href="https://crceanalytics.com"><img src="{{ url_for('static',path='/img/LogoBlack.png') }}">CRC Earth Analytics</a>
+        </div>
+		<nav>  
+			<ul>
+				<li><a href="https://github.com/chrisrycx/EnviroData_API">Github</a></li>
+			</ul>
+		</nav>
+	</header>
+    <div class="content">
+        <aside class="sidebar-col">
+            <p>This is a test of the aside</p>
+        </aside>
+        <main class="main-col">
+            <section>
+                <h2>NM Ground Water and Precipitation</h2>
+            </section>
+            <div id="app-ui">
+                <div id="map"></div>
+                <div id="charts">
+                    <div id="wellchart" class="datachart"></div>
+                    <div id="precipchart" class="datachart"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+	<footer>
+		<p><a href="https://crceanalytics.com">&copy; CRC Earth Analytics</a></p>
+	</footer>
+    <script src="{{ url_for('static',path='/js/waterapp.js') }}"></script>
+    <script src="{{ url_for('static',path='/js/map.js') }}"></script>
+</body>
+
+</html>
