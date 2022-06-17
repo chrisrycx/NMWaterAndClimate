@@ -35,10 +35,18 @@
                 <h2>NM Ground Water and Precipitation</h2>
             </section>
             <div id="app-ui">
-                <div id="map"></div>
-                <div id="charts">
+                <div class="map-section">
+                    <form id="wellyear_form">
+                        <label for="wellyear">Enter a year (1949-Present)</label>
+                        <input type="number" id="wellyear" name="wellyear" min="1949" max="2022" value="2022">
+                        <input type="submit" value="Load">
+                    </form>
+                    <div id="map"></div>
+                </div>
+                <div id="chart-section">
+                    <h3>API Query: https://st2.newmexicowaterdata.org/FROST-Server/v1.1/</h3>
+                    <div id="querytxt">Display query</div>
                     <div id="wellchart" class="datachart"></div>
-                    <div id="precipchart" class="datachart"></div>
                 </div>
             </div>
         </main>

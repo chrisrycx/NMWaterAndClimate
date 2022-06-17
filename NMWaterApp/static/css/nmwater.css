@@ -12,3 +12,7 @@
 #app-ui {
     display: flex;
 }
+
+#querytxt {
+    border: 2px solid black;
+}

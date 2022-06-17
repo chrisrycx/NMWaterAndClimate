@@ -1,206 +1,123 @@
-/*
-Code copied from HydroViewer
-*/
+// Adapted from HydroViewer map.js
+// L is the global Leaflet object
 
-const sourceURL = 'https://raw.githubusercontent.com/NMWDI/VocabService/main/pvacd.json';
-// const USGS_sourceURL = 'https://raw.githubusercontent.com/NMWDI/VocabService/main/usgs_pvacd.json';
-// const OSEROSWELL_sourceURL = 'https://raw.githubusercontent.com/NMWDI/VocabService/main/ose_roswell.json'
+
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 })
 
-var map = L.map('map', {
+//Instantiate as leafmap to avoid conflict with JS map function
+var leafmap = L.map('map', {
         preferCanvas: true,
         updateWhenZooming: false,
         updateWhenIdle: true,
         layers: [osm]
     }
 )
-map.setView([33.5, -104.5], 7);
+leafmap.setView([34, -106], 7);
+
+//Creates the marker layer
+//var layerControl = L.control.layers({"osm": osm}, null).addTo(leafmap);
+wellGroup = L.featureGroup()
 
 
-var layerControl = L.control.layers({"osm": osm}, null).addTo(map);
 
-var use_cluster = false;
-var allmarkers = [];
+//Load initial well locations
+getWellLocations(2022)
 
-data = {
-    "locations": [
+//Change locations based on selected year
+var wellyear_form = document.getElementById('wellyear_form')
+wellyear_form.onsubmit = function(e) { 
+    e.preventDefault()
+    let wellyear_data = new FormData(wellyear_form)
+    getWellLocations(wellyear_data.get('wellyear'))
+}
+
+function getWellLocations(datayear){
+    //Get locations of wells with data for input year
+    let querytxt = document.getElementById('querytxt')
+    let querystr = "Datastreams?$filter=year(phenomenonTime) eq " + datayear
+    querytxt.textContent = querystr
+
+    fetch(
+        frostServer + querystr,
         {
-            "description": "Stream",
-            "encodingType": "application/vnd.geo+json",
-            "@iot.id": "f70a1f72-2d24-11ec-84b5-9747f797b70e",
-            "location": {
-                "type": "Point",
-                "coordinates": [
-                    -104.2149722,
-                    32.409275
-                ]
-            },
-            "name": "USGS-08405200",
-            "@iot.selfLink": "https://labs.waterdata.usgs.gov/sta/v1.1/Locations('f70a1f72-2d24-11ec-84b5-9747f797b70e')",
-            "HistoricalLocations@iot.navigationLink": "https://labs.waterdata.usgs.gov/sta/v1.1/Locations('f70a1f72-2d24-11ec-84b5-9747f797b70e')/HistoricalLocations",
-            "Things@iot.navigationLink": "https://labs.waterdata.usgs.gov/sta/v1.1/Locations('f70a1f72-2d24-11ec-84b5-9747f797b70e')/Things",
-            "source": "USGS"
+            method: 'GET',
+            headers: {'Content-Type':'application/json'}
         }
-    ]
+    ).then(response => response.json()).then(loadWellLayer)
+
 }
 
-var locations=data['locations']
-// var layer = new L.LayerGroup();
-let usgs = locations.filter(function(l){return l['source']=='USGS'})
-let ose = locations.filter(function(l){return l['source']=='OSE-Roswell'})
-let nmbgmr = locations.filter(function(l){return l['source']=='NMBGMR'})
-loadLayer(ose, 'blue', 'OSE Roswell', false);
-loadLayer(usgs, 'green', 'USGS', true);
-loadLayer(nmbgmr, 'orange', 'NMGBMR', false);
+//Display sites on the map
+function loadWellLayer(data){
 
-    /*
-fetch(sourceURL,{
-    method: 'GET',
-    headers: {'Content-Type':'application/json'},
-    mode: 'no-cors'
-})
-.then(response => console.log(response.json()))
-)
-.then(function (data){
-    var locations=data['locations']
-    // var layer = new L.LayerGroup();
-    let usgs = locations.filter(function(l){return l['source']=='USGS'})
-    let ose = locations.filter(function(l){return l['source']=='OSE-Roswell'})
-    let nmbgmr = locations.filter(function(l){return l['source']=='NMBGMR'})
-    loadLayer(ose, 'blue', 'OSE Roswell', false);
-    loadLayer(usgs, 'green', 'USGS', true);
-    loadLayer(nmbgmr, 'orange', 'NMGBMR', false);
-})*/
+        //Remove old layer
+        if (leafmap.hasLayer(wellGroup)){
+            console.log('Removing layer')
+            leafmap.removeLayer(wellGroup)
+        }
+    
+        let locations = data['value']
 
-function loadLayer(ls, color, label, load_things){
-    console.log('load late')
+        let markers = locations.map(loadMarker)
 
-        let markers = ls.map(function (loc){return loadMarker(loc, color, load_things)})
+        wellGroup = new L.featureGroup(markers)
+        leafmap.addLayer(wellGroup)
+        //layerControl.addOverlay(layer, label)
 
-        var layer = new L.featureGroup(markers)
-        map.addLayer(layer)
-        layerControl.addOverlay(layer, label)
-
-        layer.on('click', function(e){
-            toggleLocation(e.layer.stid, e.layer.name)
+        wellGroup.on('click', function(e){
+            console.log(e)
+            getWellData(e.layer.dsid)
         })
+
+        
+
 }
-function loadMarker(loc, color, load_things){
-    var marker = L.circleMarker([loc['location']['coordinates'][1], loc['location']['coordinates'][0], ],)
-    marker.setStyle({color: color,
-        fillColor: color,
-        radius: 4})
-    marker.stid = loc['@iot.id']
-    marker.name = loc['name']
-    marker.source =loc['source']
-    marker.defaultColor = color
-    marker.properties = loc['properties']
-    if (load_things){
-        $.get(loc['Things@iot.navigationLink']).then(function(data){
-              let things = data['value']
-            marker.bindPopup(loc['name']+'<br/>'+ things[0]['properties']['monitoringLocationName'])
-        })
-    }else{
-        marker.bindPopup(loc['name'])
+
+function loadMarker(markerdata){
+    //Create a marker for location
+
+    //Parse phenomenon time in order to assess dataset
+    let daterange = markerdata['phenomenonTime'].split('\/')
+    let startdate = new Date(daterange[0])
+    let enddate = new Date(daterange[1])
+    let days = ((enddate - startdate)/1000)/86400
+
+    //Specify marker color based on days in dataset
+    let mcolor = 'blue'
+    if(days < 360){
+        mcolor = 'red'
+    }else if (days < 1825) {
+        //Less than 5 years
+        mcolor = 'yellow'
+    } else {
+        mcolor = 'green'
     }
-
-    // console.log(loc, loc['Things'])
-    marker.on('mouseover', function(e) {
-        marker.openPopup();
-    } )
-    marker.on('mouseout', function(e) {
-        map.closePopup();
-    } )
-
-    allmarkers.push(marker)
+    
+    let marker = L.circleMarker(
+        [
+            markerdata['observedArea']['coordinates'][1],
+            markerdata['observedArea']['coordinates'][0]
+        ]
+    )
+    marker.setStyle(
+        {
+            color: mcolor,
+            radius: 4
+        }
+    )
+    marker.dsid = markerdata['@iot.id']
+    marker.name = markerdata['name']
+    
     return marker
-    // markers.push(marker)
+
 }
-// var sourceURL = 'https://raw.githubusercontent.com/NMWDI/VocabService/main/ose_roswell.json';
-// var ose_roswell_markers = []
-// loadSource(sourceURL, ose_roswell_markers, 'blue', 'OSE Roswell');
-
-// var sourceURL = 'https://raw.githubusercontent.com/NMWDI/VocabService/main/usgs_pvacd.json';
-// var usgs_pvacd_markers = []
-// loadSource(sourceURL, usgs_pvacd_markers, 'green', 'USGS');
 
 
 
-//
-// $.getJSON("st2locations").then(
-//     function (data) {
-//         var options=data['options'];
-//         var fuzzy_options=data['fuzzy_options'];
-//         var markers=data['markers'];
-//         var fuzzy_markers=data['fuzzy_markers'];
-//         var markers_layer = L.geoJson(markers, {
-//             pointToLayer: function (feature, latln){
-//                 var marker = L.circleMarker(latln, options)
-//                 return marker
-//             }
-//         })
-//
-//             if (use_cluster){
-//                 var cluster= L.markerClusterGroup();
-//                 cluster.addLayer(markers_layer)
-//             }else{
-//                 cluster = markers_layer
-//             }
-//
-//             map.addLayer(cluster)
-//             layerControl.addOverlay(cluster, 'ST2')
-//
-//
-//             var fuzzy_layer = L.geoJson(fuzzy_markers, fuzzy_options)
-//             layerControl.addOverlay(fuzzy_layer, 'OSE RealTime')
-//     })
-//
-// $.getJSON("nmenvlocations").then(
-// function (data) {
-// var options=data['options'];
-// var markers=data['markers'];
-// var layer = L.geoJson(markers, {
-//     pointToLayer: function (feature, latln){
-//         var marker = L.circleMarker(latln, options)
-//         return marker
-//     }
-// })
-//     if (use_cluster){
-//         var cluster= L.markerClusterGroup();
-//         cluster.addLayer(layer)
-//     }else{
-//         cluster = layer
-//     }
-//     map.addLayer(cluster)
-//     layerControl.addOverlay(cluster, 'NMENV')
-//
-//
-// })
-//
-// $.getJSON("oselocations").then(
-// function (data) {
-// var options=data['options'];
-// var markers=data['markers'];
-// var layer = L.geoJson(markers, {
-//     pointToLayer: function (feature, latln){
-//         var marker = L.circleMarker(latln, options)
-//         return marker
-//     }
-// })
-//         if (use_cluster){
-//             var cluster= L.markerClusterGroup({'chunkedLoading': true});
-//             cluster.addLayers(layer)
-//
-//         }else{
-//             cluster = layer
-//         }
-//
-//         map.addLayer(cluster)
-//         layerControl.addOverlay(cluster, 'OSE PODS')
-// })
+
 
 
 
