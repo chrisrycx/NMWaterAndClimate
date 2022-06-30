@@ -4,15 +4,15 @@
     width: 600px;
 }
 
-.datacharts {
-    height: 220px;
-    width: 400px;
-}
-
 #app-ui {
     display: flex;
 }
 
+#app-ui div {
+    min-width: 600px;
+}
+
 #querytxt {
+    padding: 5px;
     border: 2px solid black;
 }

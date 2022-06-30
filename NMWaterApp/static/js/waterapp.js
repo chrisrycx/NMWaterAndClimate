@@ -12,6 +12,7 @@ basic_layout = {
         type: 'date'
     },
     height: 300,
+    //width: 500,
     margin: { t: 0 } 
 }
 

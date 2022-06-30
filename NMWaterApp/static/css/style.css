@@ -7,7 +7,6 @@ body{
 
 blockquote,q{quotes:none}
 blockquote:before,blockquote:after,q:before,q:after{content:none}
-a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:transparent}
 ins{background-color:#ff9;color:#000;text-decoration:none}
 mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}
 del{text-decoration:line-through}
@@ -20,23 +19,24 @@ input,select{vertical-align:middle}
 body,html {
 	background-color: #FFF;
 }
+
 header {
     background: #AEC6CF;
-    padding: 20px 30px;
-    margin: auto;
 }
+
 #logo {
     display: inline-block;
     vertical-align: middle;
-    font-size: 30px;
     margin-right: 75px;
     color: #FFF;
 }
+
 #logo img {
     width: 50px;
     vertical-align: middle;
     margin-right: 10px;
 }
+
 nav {
     display: inline-block;
 }
@@ -65,25 +65,18 @@ nav ul {
     list-style: none;
 }
 
-.sidebar-col {
-    width: 20%;
-    float: left;
-    background-color: #999;
-    height: 100vh;
-}
-
-main {
-    width: 80%;
-    float:right;
+.content {
+    max-width: 1200px;
+    margin: auto;
 }
 
 section {
-    max-width: 1000px;
     margin: auto;
     padding: 30px 0px;
     border-bottom: 1px solid #999;
     color: #333;
 }
+
 footer {
 	background: #AEC6CF;
 	margin: auto;

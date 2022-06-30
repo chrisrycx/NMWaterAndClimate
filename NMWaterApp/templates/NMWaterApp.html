@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ url_for('static',path='/img/logo_sm.png') }}" />
-    <title>CRC App</title>
+    <title>NMWDI Sensor Things Demo</title>
     <link rel="stylesheet" href="{{ url_for('static',path='/css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',path='/css/nmwater.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
@@ -16,39 +16,42 @@
     <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
 </head>
 <body>
-	<header>
-		<div id="logo">
-            <a href="https://crceanalytics.com"><img src="{{ url_for('static',path='/img/LogoBlack.png') }}">CRC Earth Analytics</a>
-        </div>
-		<nav>  
-			<ul>
-				<li><a href="https://github.com/chrisrycx/EnviroData_API">Github</a></li>
-			</ul>
-		</nav>
-	</header>
-    <div class="content">
-        <aside class="sidebar-col">
-            <p>This is a test of the aside</p>
-        </aside>
-        <main class="main-col">
-            <section>
-                <h2>NM Ground Water and Precipitation</h2>
-            </section>
-            <div id="app-ui">
-                <div class="map-section">
-                    <form id="wellyear_form">
-                        <label for="wellyear">Enter a year (1949-Present)</label>
-                        <input type="number" id="wellyear" name="wellyear" min="1949" max="2022" value="2022">
-                        <input type="submit" value="Load">
-                    </form>
-                    <div id="map"></div>
-                </div>
-                <div id="chart-section">
-                    <h3>API Query: https://st2.newmexicowaterdata.org/FROST-Server/v1.1/</h3>
-                    <div id="querytxt">Display query</div>
-                    <div id="wellchart" class="datachart"></div>
-                </div>
+    <header>
+        <div class="content">
+            <div id="logo">
+                <a href="https://crceanalytics.com"><img src="{{ url_for('static',path='/img/LogoBlack.png') }}">CRC Earth Analytics</a>
             </div>
+            <nav>  
+                <ul>
+                    <li><a>Demo Apps</a></li>
+                    <li><a href="https://github.com/chrisrycx/EnviroData_API">Github</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="content">
+        <section>
+            <h1>NM Ground Water Data</h1>
+            <p>Data provided by NMWDI</p>
+            <p>API Endpoint: https://st2.newmexicowaterdata.org/FROST-Server/v1.1/</p>
+        </section>
+        <div id="app-ui">
+            <div class="map-section">
+                <h3>Well Locations</h3>
+                <form id="wellyear_form">
+                    <label for="wellyear">Select a year (1949-Present)</label>
+                    <input type="number" id="wellyear" name="wellyear" min="1900" max="2022" value="2022">
+                    <input type="submit" value="Load">
+                </form>
+                <div id="map"></div>
+            </div>
+            <div id="chart-section">
+                <h3>SensorThings Query</h3>
+                <div id="querytxt"></div>
+                <h3>Groundwater History</h3>
+                <div id="wellchart" class="datachart"></div>
+            </div>
+        </div>
         </main>
     </div>
 	<footer>
