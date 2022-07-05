@@ -1,2 +1,2 @@
-# NMWaterAndClimate
-Utilize NM Water Data Initiative to display groundwater levels and compare to precipitation records.
+# SensorThings Demo App
+Utilizes NM Water Data SensorThings API to display groundwater data. 
