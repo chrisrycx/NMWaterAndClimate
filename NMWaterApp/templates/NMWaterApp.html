@@ -23,33 +23,58 @@
             </div>
             <nav>  
                 <ul>
-                    <li><a>Demo Apps</a></li>
+                    <li><a>Blog</a></li>
                     <li><a href="https://github.com/chrisrycx/EnviroData_API">Github</a></li>
+                    <li><a>CRC Earth Analytics Apps</a></li>
                 </ul>
             </nav>
         </div>
     </header>
     <div class="content">
         <section>
-            <h1>NM Ground Water Data</h1>
-            <p>Data provided by NMWDI</p>
+            <h1>SensorThings Demo App: NM Water Data</h1>
+            <h3>Collaborative Groundwater Monitoring Network</h3>
+            <p>
+                Historical groundwater measurements across the state from a variety
+                of sources including:
+                <ul>
+                    <li>NM Bureau of Geology and Mining Resources</li>
+                    <li>Pecos Valley Artesian Conservancy District</li>
+                    <li>City of Albuquerque</li>
+                </ul>
+                Earliest records date to 1915.
+            </p>
+            <p>NM Water Data Catalog: https://catalog.newmexicowaterdata.org/dataset/collaborative-groundwater-monitoring-network</p>
             <p>API Endpoint: https://st2.newmexicowaterdata.org/FROST-Server/v1.1/</p>
         </section>
         <div id="app-ui">
             <div class="map-section">
                 <h3>Well Locations</h3>
                 <form id="wellyear_form">
-                    <label for="wellyear">Select a year (1949-Present)</label>
+                    <label for="wellyear">Select a year (1915-Present)</label>
                     <input type="number" id="wellyear" name="wellyear" min="1900" max="2022" value="2022">
                     <input type="submit" value="Load">
                 </form>
+                <h4>SensorThings Query:</h4>
+                <p id="mapquery"></p>
                 <div id="map"></div>
             </div>
             <div id="chart-section">
-                <h3>SensorThings Query</h3>
-                <div id="querytxt"></div>
                 <h3>Groundwater History</h3>
                 <div id="wellchart" class="datachart"></div>
+                <h4>SensorThings Query:</h4>
+                <p id="chartquery"></p>
+                <h3>Well Information</h3>
+                <table>
+                    <tbody>
+                        <tr><td>Well Use:</td><td id="welluse"></td></tr>
+                        <tr><td>Depth:</td><td id="welldepth"></td></tr>
+                        <tr><td>Status:</td><td id="wellstatus"></td></tr>
+                        <tr><td>Agency:</td><td id="wellagency"></td></tr>
+                    </tbody>
+                </table>
+                <h4>SensorThings Query:</h4>
+                <p id="metaquery"></p>
             </div>
         </div>
         </main>

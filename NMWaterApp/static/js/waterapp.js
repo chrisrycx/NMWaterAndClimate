@@ -7,19 +7,22 @@ var wellchrt = document.getElementById('wellchart')
 //var pchrt = document.getElementById('precipchart')
 
 basic_layout = {
-    title: 'Select well site',
     xaxis: {
-        type: 'date'
+        type: 'date',
+        title: 'Date'
+    },
+    yaxis: {
+        title: 'testing'
     },
     height: 300,
-    //width: 500,
+    width: 600,
     margin: { t: 0 } 
 }
 
 Plotly.newPlot(wellchrt, [{x:[],y:[]}], basic_layout)
 //Plotly.newPlot(pchrt, [{x:[],y:[]}], basic_layout)
 
-function updateWellChrt(dts,vals){
+function updateWellChrt(dts,vals,ylabel){
  
     var data_update = {
         x: [dts],
@@ -27,52 +30,20 @@ function updateWellChrt(dts,vals){
     }
 
     var layout_update = {
-        title: 'New',
+        yaxis: {title: ylabel}
     }
     
-    Plotly.update(wellchrt, data_update)
-}
-
-function updatePrecip(){
-    //Generate data
-
-    let data = {
-        x: [[1, 2, 4, 8, 16]],
-        y: [[1, 2, 3, 4, 5]]
-    }
-
-    Plotly.update(pchrt,data)
-
-}
-
-function getDataStream(well_id){
-    console.lot('datastream')
-    let querytxt = document.getElementById('querytxt')
-    let querystr = `Locations(${well_id})?$expand=Things/Datastreams/ObservedProperty,Things/Datastreams/Sensor`
-    querytxt.textContent = querystr
-    
-    //Get the groundwater level datastream ID from NM Water Data
-    fetch(
-        frostServer + querystr,
-        {
-            method: 'GET',
-            headers: {'Content-Type':'application/json'}
-        }
-    ).then(response => response.json()).then(function(location_data){
-        //TODO!!!!!!!!!!!!!!
-        return 4900
-    })
-
+    Plotly.update(wellchrt, data_update, layout_update)
 }
 
 function getWellData(datastream_id){
     //Download groundwater level data from NM Water Data
 
-    let querytxt = document.getElementById('querytxt')
-    let querystr = `Datastreams(${datastream_id})/Observations?$orderby=phenomenonTime desc`
+    let querytxt = document.getElementById('chartquery')
+    let querystr = 
+        `Datastreams(${datastream_id})?$expand=Observations($orderby=phenomenonTime desc)`
     querytxt.textContent = querystr
 
-    console.log('Datastream: ' + datastream_id)
     fetch(
         frostServer + querystr,
         {
@@ -80,8 +51,36 @@ function getWellData(datastream_id){
             headers: {'Content-Type':'application/json'}
         }
     ).then(response => response.json()).then(function(rawdata){
-        let dtstamps = rawdata['value'].map(x => x['phenomenonTime'])
-        let dvals = rawdata['value'].map(x => x['result'])
-        updateWellChrt(dtstamps,dvals)
+        let yaxis = rawdata.name
+        let dtstamps = rawdata.Observations.map(x => x['phenomenonTime'])
+        let dvals = rawdata.Observations.map(x => x['result'])
+        updateWellChrt(dtstamps,dvals,yaxis)
     })
+}
+
+function getWellMeta(datastream_id){
+    //Download "thing" information associated with datastream
+
+    let querystr = `Datastreams(${datastream_id})/Thing`
+    let querytxt = document.getElementById('metaquery')
+    querytxt.textContent = querystr
+    
+    fetch(
+        frostServer + querystr,
+        {
+            method: 'GET',
+            headers: {'Content-Type':'application/json'}
+        }
+    ).then(response => response.json()).then(function(rawdata){
+        let wellname = document.getElementById("welluse")
+        let welldepth = document.getElementById("welldepth")
+        let wellstatus = document.getElementById("wellstatus")
+        let wellagency = document.getElementById("wellagency")
+        
+        wellname.textContent = rawdata.properties.Use
+        welldepth.textContent = rawdata.properties.WellDepth
+        wellstatus.textContent = rawdata.properties.Status
+        wellagency.textContent = rawdata.properties.agency
+    })
+
 }

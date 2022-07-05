@@ -21,8 +21,6 @@ leafmap.setView([34, -106], 7);
 //var layerControl = L.control.layers({"osm": osm}, null).addTo(leafmap);
 wellGroup = L.featureGroup()
 
-
-
 //Load initial well locations
 getWellLocations(2022)
 
@@ -36,7 +34,7 @@ wellyear_form.onsubmit = function(e) {
 
 function getWellLocations(datayear){
     //Get locations of wells with data for input year
-    let querytxt = document.getElementById('querytxt')
+    let querytxt = document.getElementById('mapquery')
     let querystr = "Datastreams?$filter=year(phenomenonTime) eq " + datayear
     querytxt.textContent = querystr
 
@@ -70,6 +68,7 @@ function loadWellLayer(data){
         wellGroup.on('click', function(e){
             console.log(e)
             getWellData(e.layer.dsid)
+            getWellMeta(e.layer.dsid)
         })
 
         

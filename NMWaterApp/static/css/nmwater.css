@@ -1,18 +1,25 @@
 /* CSS specific to NM Water App */
 #map {
     height: 650px;
-    width: 600px;
+    width: 575px;
 }
 
 #app-ui {
     display: flex;
-}
-
-#app-ui div {
-    min-width: 600px;
+    justify-content: space-between;
 }
 
 #querytxt {
     padding: 5px;
     border: 2px solid black;
+}
+
+table {
+    margin: auto;
+    width: 400px;
+}
+
+td {
+    border: 1px solid black;
+    padding: 5px;
 }
